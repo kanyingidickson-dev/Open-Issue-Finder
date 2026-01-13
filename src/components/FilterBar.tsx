@@ -39,7 +39,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, isLoading 
     };
 
     return (
-        <aside className="fixed left-0 top-0 bottom-0 w-[var(--sidebar-width)] hidden lg:flex flex-col border-r border-border-subtle bg-bg-surface/50 backdrop-blur-xl z-30 overflow-y-auto">
+        <aside className="sidebar flex flex-col z-30">
             <div className="p-8 pb-4">
                 <div className="flex items-center gap-3 mb-10">
                     <div className="w-10 h-10 rounded-xl bg-brand-primary flex items-center justify-center shadow-lg shadow-brand-primary/20">
@@ -47,21 +47,21 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, isLoading 
                     </div>
                     <div>
                         <h1 className="text-xl font-bold tracking-tight">IssueFinder</h1>
-                        <p className="text-[10px] text-brand-primary font-bold uppercase tracking-[0.2em]">v1.0.0</p>
+                        <p className="text-xs text-brand-primary font-bold uppercase tracking-widest opacity-80">v1.0.0</p>
                     </div>
                 </div>
 
-                <div className="space-y-8">
+                <div className="grid gap-8">
                     {/* Search Section */}
-                    <div className="space-y-3">
+                    <div className="grid gap-3">
                         <label className="text-xs font-bold text-text-muted uppercase tracking-widest flex items-center gap-2">
                             <Search size={12} /> Search
                         </label>
-                        <div className="relative group">
+                        <div className="relative">
                             <input
                                 type="text"
                                 placeholder="Keywords..."
-                                className="w-full bg-bg-elevated border border-border-subtle rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-brand-primary transition-all pr-10 focus:ring-4 focus:ring-brand-primary/10"
+                                className="w-full bg-bg-elevated border border-border-subtle rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-brand-primary transition-all"
                                 value={query}
                                 onChange={(e) => {
                                     setQuery(e.target.value);
@@ -75,11 +75,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, isLoading 
                     </div>
 
                     {/* Language Section */}
-                    <div className="space-y-3">
+                    <div className="grid gap-3">
                         <label className="text-xs font-bold text-text-muted uppercase tracking-widest flex items-center gap-2">
                             <Layers size={12} /> Languages
                         </label>
-                        <div className="grid grid-cols-1 gap-1">
+                        <div className="grid gap-1">
                             {languages.map((lang) => (
                                 <button
                                     key={lang.value}
@@ -87,22 +87,22 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, isLoading 
                                         setLanguage(lang.value);
                                         handleFilterUpdate({ language: lang.value });
                                     }}
-                                    className={`text-left px-4 py-2.5 rounded-lg text-sm transition-all flex items-center justify-between group ${language === lang.value
-                                        ? 'bg-brand-primary/10 text-brand-primary border-l-2 border-brand-primary font-semibold'
-                                        : 'text-text-secondary hover:bg-bg-accent hover:text-text-primary'
+                                    className={`text-left px-4 py-2.5 rounded-lg text-sm transition-all flex items-center justify-between ${language === lang.value
+                                            ? 'bg-brand-primary/10 text-brand-primary font-semibold'
+                                            : 'text-text-secondary hover:bg-bg-accent hover:text-text-primary'
                                         }`}
                                 >
                                     {lang.label}
-                                    {language === lang.value && <div className="w-1.5 h-1.5 rounded-full bg-brand-primary shadow-glow shadow-brand-primary" />}
+                                    {language === lang.value && <div className="w-1.5 h-1.5 rounded-full bg-brand-primary" />}
                                 </button>
                             ))}
                         </div>
                     </div>
 
                     {/* Labels Section */}
-                    <div className="space-y-3">
+                    <div className="grid gap-3">
                         <label className="text-xs font-bold text-text-muted uppercase tracking-widest flex items-center gap-2">
-                            <Hash size={12} /> Issue Impact
+                            <Hash size={12} /> Focus
                         </label>
                         <div className="flex flex-wrap gap-2">
                             {labels.map((l) => (
@@ -113,8 +113,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, isLoading 
                                         handleFilterUpdate({ label: l.value });
                                     }}
                                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${label === l.value
-                                        ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/25'
-                                        : 'bg-bg-elevated text-text-muted border border-border-subtle hover:border-text-muted hover:text-text-secondary'
+                                            ? 'bg-brand-primary text-white'
+                                            : 'bg-bg-elevated text-text-muted border border-border-subtle hover:text-text-secondary'
                                         }`}
                                 >
                                     {l.label}
@@ -126,12 +126,12 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, isLoading 
             </div>
 
             <div className="mt-auto p-8 pt-4">
-                <div className="p-4 rounded-2xl bg-gradient-to-br from-brand-primary/20 to-brand-secondary/5 border border-brand-primary/10">
-                    <p className="text-xs font-bold text-brand-primary mb-1">New to OS?</p>
-                    <p className="text-[11px] text-text-secondary leading-relaxed mb-3">
-                        Start with "Good First Issue" to build your confidence.
+                <div className="p-4 rounded-2xl bg-bg-elevated border border-border-subtle">
+                    <p className="text-xs font-bold text-brand-primary mb-1">Getting Started?</p>
+                    <p className="text-sm text-text-muted mb-3">
+                        Pick a language and filter for "Good First Issue".
                     </p>
-                    <button className="text-[11px] font-bold text-white hover:underline flex items-center gap-1">
+                    <button className="text-xs font-bold text-white hover:underline">
                         Read Guide →
                     </button>
                 </div>

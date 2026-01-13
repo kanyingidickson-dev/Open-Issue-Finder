@@ -16,35 +16,37 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
     const repoName = issue.repository_url.split('/').slice(-2).join('/');
 
     return (
-        <div className="glass-card p-6 rounded-[1.5rem] transition-all duration-300 hover:scale-[1.02] hover:bg-white/[0.02] group flex flex-col h-full relative overflow-hidden">
+        <div className="glass-card p-6 rounded-[1.5rem] flex flex-col h-full relative overflow-hidden group">
             {/* Background Accent */}
-            <div className="absolute top-0 right-0 w-24 h-24 bg-brand-primary/5 blur-3xl rounded-full -mr-10 -mt-10 group-hover:bg-brand-primary/10 transition-colors" />
+            <div
+                className="absolute top-0 right-0 w-24 h-24 bg-brand-primary opacity-5 blur-3xl rounded-full -mr-10 -mt-10 group-hover:opacity-10 transition-opacity"
+            />
 
             {/* Header: User & Date */}
             <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full border border-border-subtle overflow-hidden">
-                        <img src={issue.user?.avatar_url} alt={issue.user?.login} className="w-full h-full object-cover" />
+                    <div className="avatar-container">
+                        <img src={issue.user?.avatar_url} alt={issue.user?.login} loading="lazy" />
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-sm font-bold text-text-primary leading-tight">{issue.user?.login || 'anonymous'}</span>
-                        <span className="text-[10px] text-text-muted font-medium flex items-center gap-1">
+                        <span className="text-sm font-bold text-white leading-tight">{issue.user?.login || 'anonymous'}</span>
+                        <span className="text-xs text-text-muted font-medium flex items-center gap-1">
                             <Clock size={10} /> {createdAt}
                         </span>
                     </div>
                 </div>
-                <div className="p-2 rounded-lg bg-bg-accent/50 border border-border-subtle group-hover:border-brand-primary/50 transition-all">
+                <div className="p-2 rounded-xl bg-bg-accent border border-border-subtle group-hover:border-brand-primary transition-colors">
                     <Terminal size={14} className="text-text-muted group-hover:text-brand-primary" />
                 </div>
             </div>
 
             {/* Content: Title & Repo */}
             <div className="mb-6 flex-grow">
-                <div className="flex items-center gap-1.5 text-brand-primary text-[11px] font-bold uppercase tracking-wider mb-2">
+                <div className="flex items-center gap-2 text-brand-primary text-xs font-bold uppercase tracking-wider mb-2">
                     <GitBranch size={12} />
-                    <span className="truncate max-w-[200px]">{repoName}</span>
+                    <span className="truncate">{repoName}</span>
                 </div>
-                <h3 className="text-lg font-bold leading-snug group-hover:text-brand-primary transition-colors line-clamp-2 mb-4">
+                <h3 className="text-lg font-bold leading-snug group-hover:text-brand-primary transition-colors mb-4">
                     {issue.title}
                 </h3>
             </div>
@@ -54,7 +56,7 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
                 {issue.labels?.slice(0, 3).map((label: any) => (
                     <span
                         key={label.id || label.name}
-                        className="px-3 py-1 rounded-full text-[10px] font-bold border border-white/[0.05] transition-colors"
+                        className="px-3 py-1 rounded-full text-xs font-bold border border-white/[0.05]"
                         style={{
                             backgroundColor: `#${label.color}15`,
                             color: `#${label.color}`,
@@ -64,7 +66,7 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
                     </span>
                 ))}
                 {(issue.labels?.length || 0) > 3 && (
-                    <span className="px-2 py-1 rounded-full text-[10px] font-bold text-text-muted bg-white/[0.05]">
+                    <span className="px-2 py-1 rounded-full text-xs font-bold text-text-muted bg-white/[0.05]">
                         +{(issue.labels?.length || 0) - 3}
                     </span>
                 )}
@@ -75,14 +77,14 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
                 <div className="flex items-center gap-4 text-text-muted">
                     <div className="flex items-center gap-1.5 text-xs font-semibold">
                         <MessageSquare size={14} className="text-brand-primary" />
-                        {issue.comments} <span className="text-[10px] font-normal opacity-60">COMMENTS</span>
+                        {issue.comments} <span className="text-xs font-normal opacity-60">COMMENTS</span>
                     </div>
                 </div>
                 <a
                     href={issue.html_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-xs font-bold text-white bg-white/[0.05] hover:bg-brand-primary py-2 px-4 rounded-xl transition-all active:scale-95"
+                    className="flex items-center gap-2 text-xs font-bold text-white bg-bg-accent hover:bg-brand-primary py-2 px-4 rounded-xl transition-all"
                 >
                     Review Issue
                     <ExternalLink size={12} />
