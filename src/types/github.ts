@@ -8,8 +8,9 @@ export interface GitHubIssue {
     } | null;
     labels: {
         id?: number;
-        name?: string;
-        color?: string;
+        name: string;
+        color: string;
+        description?: string;
     }[];
     repository_url: string;
     created_at: string;
@@ -22,6 +23,7 @@ export interface RepositoryMetadata {
     language: string;
     stargazers_count: number;
     description: string;
+    html_url: string;
 }
 
 export type SearchFilters = {
