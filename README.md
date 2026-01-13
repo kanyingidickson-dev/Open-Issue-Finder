@@ -2,10 +2,6 @@
 
 A production-grade discovery tool for finding beginner-friendly open-source issues. Built with performance, accessibility, and developer experience in mind.
 
-![License](https://img.shields.io/github/license/kanyingidickson-dev/Open-Issue-Finder)
-![Stars](https://img.shields.io/github/stars/kanyingidickson-dev/Open-Issue-Finder)
-![Issues](https://img.shields.io/github/issues/kanyingidickson-dev/Open-Issue-Finder)
-
 ## Features
 
 - **Real-time Discovery**: Directly interfaces with the GitHub API to find the latest issues.
