@@ -4,7 +4,7 @@ const octokit = new Octokit({
     auth: import.meta.env.VITE_GITHUB_TOKEN || undefined,
 });
 
-export const fetchIssues = async (filters: { language?: string; label?: string; query?: string }) => {
+export const fetchIssues = async (filters: { language?: string; label?: string; query?: string }, page = 1) => {
     let queryString = 'is:open is:issue';
 
     if (filters.label) {
@@ -25,6 +25,7 @@ export const fetchIssues = async (filters: { language?: string; label?: string; 
             sort: 'created',
             order: 'desc',
             per_page: 30,
+            page,
         });
 
         return data.items;
