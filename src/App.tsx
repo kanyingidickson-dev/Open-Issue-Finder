@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Github, Sparkles, AlertCircle, Loader2, LayoutGrid, Activity, Moon, Sun, Settings, X, Check, Bookmark, Trash2 } from 'lucide-react';
+import { Github, Sparkles, AlertCircle, Loader2, LayoutGrid, Moon, Sun, X, Check, Bookmark, Trash2, Info } from 'lucide-react';
 import { FilterBar } from './components/FilterBar';
 import { IssueRow } from './components/IssueRow';
 import { useIssues } from './hooks/useIssues';
