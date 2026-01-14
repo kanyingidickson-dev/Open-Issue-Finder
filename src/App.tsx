@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Github, Sparkles, AlertCircle, Loader2, LayoutGrid, Moon, Sun, X, Check, Bookmark, Trash2, Info } from 'lucide-react';
 import { FilterBar } from './components/FilterBar';
 import { IssueRow } from './components/IssueRow';
 import { useIssues } from './hooks/useIssues';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import type { SearchFilters, GitHubIssue, SavedIssue } from './types/github';
 
 function App() {
@@ -74,6 +75,19 @@ function App() {
       showToast('All saved issues cleared', 'info');
     }
   };
+
+  // Keyboard shortcuts for power users
+  const shortcuts = useMemo(() => ({
+    'd': () => setView('discover'),
+    's': () => setView('saved'),
+    't': () => toggleTheme(),
+    '/': () => {
+      const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+      searchInput?.focus();
+    }
+  }), []);
+
+  useKeyboardShortcuts(shortcuts, !isSettingsOpen);
 
   return (
     <div className="dashboard-grid">
