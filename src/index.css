@@ -111,9 +111,10 @@ body {
   gap: 0.5rem;
 }
 
+
 /* Filter Buttons */
 .filter-group {
-  margin-bottom: 2rem;
+  margin-bottom: 0;
 }
 
 /* Dropdown / Select Styles */
@@ -215,6 +216,7 @@ body {
 }
 
 /* Main Content Area */
+/* Main Content Area */
 .app-header {
   height: 64px;
   /* Reduced height */
@@ -223,7 +225,8 @@ body {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--color-border);
-  background: rgba(9, 9, 11, 0.9);
+  background: var(--color-bg-alpha);
+  /* Use variable for alpha bg */
   backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
@@ -262,16 +265,19 @@ body {
   gap: 0.5rem;
   padding: 0.4rem 0.8rem;
   background: var(--color-text);
-  color: #000;
+  color: var(--color-bg);
+  /* Inverted for contrast */
   border-radius: var(--radius-sm);
   font-size: 0.75rem;
   font-weight: 700;
   transition: transform 0.2s;
+  border: 1px solid transparent;
 }
 
 .github-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+  opacity: 0.9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* --- Table Styled Issues --- */
@@ -293,11 +299,14 @@ body {
   width: 100%;
   border-collapse: collapse;
   white-space: nowrap;
+  table-layout: fixed;
+  /* Force column widths */
 }
 
 .issues-table th {
   text-align: left;
-  padding: 1rem 1.5rem;
+  padding: 1rem 1rem;
+  /* Reduced padding */
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -308,9 +317,12 @@ body {
 }
 
 .issues-table td {
-  padding: 1rem 1.5rem;
+  padding: 1rem 1rem;
+  /* Reduced padding */
   border-bottom: 1px solid var(--color-border);
   vertical-align: middle;
+  overflow: hidden;
+  /* Prevent spill */
 }
 
 .issue-row {
@@ -327,8 +339,10 @@ body {
 }
 
 /* Cell Styles */
+/* Cell Styles - Optimized for Single Screen Desktop */
 .cell-repo {
-  width: 220px;
+  width: 180px;
+  /* Reduced */
 }
 
 .repo-icon {
@@ -344,9 +358,9 @@ body {
 }
 
 .cell-main {
-  min-width: 300px;
+  /* Takes remaining space */
+  width: auto;
   white-space: normal;
-  /* Allow title to wrap if needed, though usually long */
 }
 
 .issue-title-link {
@@ -375,7 +389,6 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: var(--label-color);
   box-shadow: inset 0 0 0 1px var(--color-bg);
-  /* Contrast hack */
   position: relative;
   overflow: hidden;
 }
@@ -396,21 +409,25 @@ body {
 }
 
 .cell-author {
-  width: 150px;
+  width: 130px;
+  /* Squeezed */
 }
 
 .cell-comments {
-  width: 100px;
+  width: 80px;
+  /* Squeezed */
   text-align: center;
 }
 
 .cell-date {
-  width: 140px;
+  width: 110px;
+  /* Squeezed */
   text-align: right;
 }
 
 .cell-action {
-  width: 80px;
+  width: 60px;
+  /* Squeezed */
   text-align: right;
 }
 
@@ -533,4 +550,224 @@ body {
     opacity: 1;
     pointer-events: auto;
   }
+}
+
+/* --- Utilities to replace Tailwind --- */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.items-end {
+  align-items: flex-end;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-1 {
+  gap: 0.25rem;
+}
+
+.gap-1\.5 {
+  gap: 0.375rem;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Avatar Fix */
+.avatar-small {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-bg-elevated);
+  min-width: 24px;
+  /* Prevent squishing */
+}
+
+/* Text Utilities */
+.font-bold {
+  font-weight: 700;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.text-white {
+  color: var(--color-text);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.text-dim {
+  color: var(--color-text-dim);
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.tracking-wider {
+  letter-spacing: 0.05em;
+}
+
+/* Light Mode Theme */
+:root[data-theme="light"] {
+  --color-bg: #ffffff;
+  --color-bg-subtle: #f4f4f5;
+  --color-bg-card: #ffffff;
+  --color-bg-elevated: #e4e4e7;
+  --color-bg-hover: #f4f4f5;
+
+  --color-text: #18181b;
+  --color-text-muted: #52525b;
+  --color-text-dim: #a1a1aa;
+
+  --color-border: #e4e4e7;
+  --color-border-hover: #d4d4d8;
+
+  --color-primary: #7c3aed;
+  --color-primary-glow: rgba(124, 58, 237, 0.2);
+  --color-primary-dim: rgba(124, 58, 237, 0.08);
+}
+
+/* Premium Enhancements */
+.sidebar {
+  border-right: 1px solid var(--color-border);
+  box-shadow: 1px 0 0 rgba(0, 0, 0, 0.02);
+}
+
+.custom-select,
+.search-input {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.issue-row:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  position: relative;
+}
+
+.table-label {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer Centering */
+.app-footer {
+  padding: 2rem;
+  text-align: center;
+  color: var(--color-text-dim);
+  font-size: 0.8rem;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+:root[data-theme="light"] {
+  --color-bg-alpha: rgba(255, 255, 255, 0.9);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-dim);
+}
+
+/* Utilities */
+.glass-panel {
+  background: var(--color-bg-alpha);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+}
+
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  z-index: 200;
+  max-width: 300px;
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Selection */
+::selection {
+  background: var(--color-primary-dim);
+  color: var(--color-primary);
 }
