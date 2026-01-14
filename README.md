@@ -5,8 +5,10 @@ A production-grade discovery tool for finding beginner-friendly open-source issu
 ## Features
 
 - **Real-time Discovery**: Directly interfaces with the GitHub API to find the latest issues.
-- **Smart Filtering**: Filter by language, labels (e.g., `good first issue`, `help wanted`), and custom search queries.
-- **Premium UI/UX**: Dark-mode first design with glassmorphism aesthetics and smooth transitions.
+- **Smart Filtering**: Filter by language, labels (e.g., `good first issue`, `help wanted`), sort order, and specific issue/state status.
+- **Saved Collections**: Bookmark interesting issues locally to review or tackle later.
+- **View Modes**: Switch between "Discovery" mode and your "Saved Collection".
+- **Premium UI/UX**: Dark-mode first design with glassmorphism aesthetics, smooth transitions, and toast notifications.
 - **Responsive Design**: Fully optimized for mobile, tablet, and desktop viewing.
 
 ## Tech Stack
