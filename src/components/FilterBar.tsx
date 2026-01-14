@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Hash, Code2, Layers, RefreshCcw, ChevronDown, X, Info, Settings, BookOpen, ArrowDownUp, CheckCircle2 } from 'lucide-react';
+import { Search, Hash, Code2, Layers, RefreshCcw, ChevronDown, X, Settings, BookOpen, ArrowDownUp, CheckCircle2 } from 'lucide-react';
 import type { SearchFilters } from '../types/github';
 
 interface FilterBarProps {
