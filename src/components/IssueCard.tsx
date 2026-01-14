@@ -16,75 +16,72 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
     const repoName = issue.repository_url.split('/').slice(-2).join('/');
 
     return (
-        <div className="glass-card p-6 rounded-[1.5rem] flex flex-col h-full relative overflow-hidden group">
+        <div className="issue-card">
             {/* Background Accent */}
-            <div
-                className="absolute top-0 right-0 w-24 h-24 bg-brand-primary opacity-5 blur-3xl rounded-full -mr-10 -mt-10 group-hover:opacity-10 transition-opacity"
-            />
+            <div className="glow" />
 
             {/* Header: User & Date */}
-            <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center gap-3">
-                    <div className="avatar-container">
-                        <img src={issue.user?.avatar_url} alt={issue.user?.login} loading="lazy" />
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-sm font-bold text-white leading-tight">{issue.user?.login || 'anonymous'}</span>
-                        <span className="text-xs text-text-muted font-medium flex items-center gap-1">
-                            <Clock size={10} /> {createdAt}
+            <div className="card-header">
+                <div className="user-info">
+                    <img className="avatar" src={issue.user?.avatar_url} alt={issue.user?.login} loading="lazy" />
+                    <div className="user-details">
+                        <span className="username">{issue.user?.login || 'anonymous'}</span>
+                        <span className="post-date">
+                            <Clock size={10} style={{ marginRight: '4px', display: 'inline' }} /> {createdAt}
                         </span>
                     </div>
                 </div>
-                <div className="p-2 rounded-xl bg-bg-accent border border-border-subtle group-hover:border-brand-primary transition-colors">
-                    <Terminal size={14} className="text-text-muted group-hover:text-brand-primary" />
+                <div style={{ color: 'var(--color-text-muted)' }}>
+                    <Terminal size={14} />
                 </div>
             </div>
 
             {/* Content: Title & Repo */}
-            <div className="mb-6 flex-grow">
-                <div className="flex items-center gap-2 text-brand-primary text-xs font-bold uppercase tracking-wider mb-2">
+            <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                <div className="repo-badge">
                     <GitBranch size={12} />
-                    <span className="truncate">{repoName}</span>
+                    <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>
+                        {repoName}
+                    </span>
                 </div>
-                <h3 className="text-lg font-bold leading-snug group-hover:text-brand-primary transition-colors mb-4">
+                <h3 className="issue-title">
                     {issue.title}
                 </h3>
-            </div>
 
-            {/* Labels */}
-            <div className="flex flex-wrap gap-2 mb-8">
-                {issue.labels?.slice(0, 3).map((label: any) => (
-                    <span
-                        key={label.id || label.name}
-                        className="px-3 py-1 rounded-full text-xs font-bold border border-white/[0.05]"
-                        style={{
-                            backgroundColor: `#${label.color}15`,
-                            color: `#${label.color}`,
-                        }}
-                    >
-                        {label.name}
-                    </span>
-                ))}
-                {(issue.labels?.length || 0) > 3 && (
-                    <span className="px-2 py-1 rounded-full text-xs font-bold text-text-muted bg-white/[0.05]">
-                        +{(issue.labels?.length || 0) - 3}
-                    </span>
-                )}
+                {/* Labels */}
+                <div className="label-container">
+                    {issue.labels?.slice(0, 3).map((label: any) => (
+                        <span
+                            key={label.id || label.name}
+                            className="issue-label"
+                            style={{
+                                backgroundColor: `#${label.color}15`,
+                                color: `#${label.color}`,
+                                border: '1px solid rgba(255,255,255,0.05)'
+                            }}
+                        >
+                            {label.name}
+                        </span>
+                    ))}
+                    {(issue.labels?.length || 0) > 3 && (
+                        <span className="issue-label" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--color-text-muted)' }}>
+                            +{(issue.labels?.length || 0) - 3}
+                        </span>
+                    )}
+                </div>
             </div>
 
             {/* Footer: Metadata & Link */}
-            <div className="mt-auto pt-6 border-t border-white/[0.05] flex justify-between items-center">
-                <div className="flex items-center gap-4 text-text-muted">
-                    <div className="flex items-center gap-1.5 text-xs font-semibold">
-                        <MessageSquare size={14} className="text-brand-primary" />
-                        {issue.comments} <span className="text-xs font-normal opacity-60">COMMENTS</span>
-                    </div>
+            <div className="card-footer">
+                <div className="meta-item">
+                    <MessageSquare size={14} style={{ color: 'var(--color-primary)' }} />
+                    {issue.comments} <span style={{ opacity: 0.6, fontWeight: 400 }}>COMMENTS</span>
                 </div>
                 <a
                     href={issue.html_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-xs font-bold text-white bg-bg-accent hover:bg-brand-primary py-2 px-4 rounded-xl transition-all"
+                    className="review-btn"
                 >
                     Review Issue
                     <ExternalLink size={12} />

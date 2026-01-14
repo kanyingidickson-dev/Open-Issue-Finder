@@ -39,99 +39,91 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, isLoading 
     };
 
     return (
-        <aside className="sidebar flex flex-col z-30">
-            <div className="p-8 pb-4">
-                <div className="flex items-center gap-3 mb-10">
-                    <div className="w-10 h-10 rounded-xl bg-brand-primary flex items-center justify-center shadow-lg shadow-brand-primary/20">
-                        <Code2 className="text-white" size={24} />
-                    </div>
-                    <div>
-                        <h1 className="text-xl font-bold tracking-tight">IssueFinder</h1>
-                        <p className="text-xs text-brand-primary font-bold uppercase tracking-widest opacity-80">v1.0.0</p>
+        <aside className="sidebar">
+            <div className="sidebar-header">
+                <div className="logo-box">
+                    <Code2 className="text-white" size={20} />
+                </div>
+                <div>
+                    <h1 className="text-lg font-bold leading-none">IssueFinder</h1>
+                    <p className="text-xs text-brand-primary opacity-80 font-mono mt-1">v1.0.0</p>
+                </div>
+            </div>
+
+            <div className="p-6 grid gap-8">
+                {/* Search Section */}
+                <div className="filter-group">
+                    <label className="section-label">
+                        <Search size={12} /> Search
+                    </label>
+                    <div className="search-wrapper">
+                        <input
+                            type="text"
+                            placeholder="Keywords..."
+                            className="search-input"
+                            value={query}
+                            onChange={(e) => {
+                                setQuery(e.target.value);
+                                handleFilterUpdate({ query: e.target.value });
+                            }}
+                        />
+                        {isLoading && (
+                            <RefreshCcw className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-primary animate-spin" size={14} />
+                        )}
                     </div>
                 </div>
 
-                <div className="grid gap-8">
-                    {/* Search Section */}
-                    <div className="grid gap-3">
-                        <label className="text-xs font-bold text-text-muted uppercase tracking-widest flex items-center gap-2">
-                            <Search size={12} /> Search
-                        </label>
-                        <div className="relative">
-                            <input
-                                type="text"
-                                placeholder="Keywords..."
-                                className="w-full bg-bg-elevated border border-border-subtle rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-brand-primary transition-all"
-                                value={query}
-                                onChange={(e) => {
-                                    setQuery(e.target.value);
-                                    handleFilterUpdate({ query: e.target.value });
+                {/* Language Section */}
+                <div className="filter-group">
+                    <label className="section-label">
+                        <Layers size={12} /> Languages
+                    </label>
+                    <div className="grid gap-1">
+                        {languages.map((lang) => (
+                            <button
+                                key={lang.value}
+                                onClick={() => {
+                                    setLanguage(lang.value);
+                                    handleFilterUpdate({ language: lang.value });
                                 }}
-                            />
-                            {isLoading && (
-                                <RefreshCcw className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-primary animate-spin" size={16} />
-                            )}
-                        </div>
+                                className={`nav-item ${language === lang.value ? 'active' : ''}`}
+                            >
+                                <span>{lang.label}</span>
+                                {language === lang.value && <div className="active-indicator" />}
+                            </button>
+                        ))}
                     </div>
+                </div>
 
-                    {/* Language Section */}
-                    <div className="grid gap-3">
-                        <label className="text-xs font-bold text-text-muted uppercase tracking-widest flex items-center gap-2">
-                            <Layers size={12} /> Languages
-                        </label>
-                        <div className="grid gap-1">
-                            {languages.map((lang) => (
-                                <button
-                                    key={lang.value}
-                                    onClick={() => {
-                                        setLanguage(lang.value);
-                                        handleFilterUpdate({ language: lang.value });
-                                    }}
-                                    className={`text-left px-4 py-2.5 rounded-lg text-sm transition-all flex items-center justify-between ${language === lang.value
-                                            ? 'bg-brand-primary/10 text-brand-primary font-semibold'
-                                            : 'text-text-secondary hover:bg-bg-accent hover:text-text-primary'
-                                        }`}
-                                >
-                                    {lang.label}
-                                    {language === lang.value && <div className="w-1.5 h-1.5 rounded-full bg-brand-primary" />}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Labels Section */}
-                    <div className="grid gap-3">
-                        <label className="text-xs font-bold text-text-muted uppercase tracking-widest flex items-center gap-2">
-                            <Hash size={12} /> Focus
-                        </label>
-                        <div className="flex flex-wrap gap-2">
-                            {labels.map((l) => (
-                                <button
-                                    key={l.value}
-                                    onClick={() => {
-                                        setLabel(l.value);
-                                        handleFilterUpdate({ label: l.value });
-                                    }}
-                                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${label === l.value
-                                            ? 'bg-brand-primary text-white'
-                                            : 'bg-bg-elevated text-text-muted border border-border-subtle hover:text-text-secondary'
-                                        }`}
-                                >
-                                    {l.label}
-                                </button>
-                            ))}
-                        </div>
+                {/* Labels Section */}
+                <div className="filter-group">
+                    <label className="section-label">
+                        <Hash size={12} /> Focus
+                    </label>
+                    <div className="chip-group">
+                        {labels.map((l) => (
+                            <button
+                                key={l.value}
+                                onClick={() => {
+                                    setLabel(l.value);
+                                    handleFilterUpdate({ label: l.value });
+                                }}
+                                className={`chip ${label === l.value ? 'active' : ''}`}
+                            >
+                                {l.label}
+                            </button>
+                        ))}
                     </div>
                 </div>
             </div>
 
-            <div className="mt-auto p-8 pt-4">
-                <div className="p-4 rounded-2xl bg-bg-elevated border border-border-subtle">
-                    <p className="text-xs font-bold text-brand-primary mb-1">Getting Started?</p>
-                    <p className="text-sm text-text-muted mb-3">
+            <div className="mt-auto p-6">
+                <div className="p-4 rounded-xl bg-bg-elevated border border-border-subtle" style={{ background: 'var(--color-bg-elevated)', border: '1px solid var(--color-border)' }}>
+                    <p style={{ color: 'var(--color-primary)', fontSize: '0.75rem', fontWeight: '700', marginBottom: '0.25rem' }}>Getting Started?</p>
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem', marginBottom: '0.75rem' }}>
                         Pick a language and filter for "Good First Issue".
                     </p>
-                    <button className="text-xs font-bold text-white hover:underline">
+                    <button style={{ fontSize: '0.75rem', fontWeight: '700', color: 'white' }}>
                         Read Guide →
                     </button>
                 </div>
