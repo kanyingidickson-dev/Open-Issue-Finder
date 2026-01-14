@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Hash, Code2, Layers, RefreshCcw, ChevronDown, X, Settings, BookOpen, ArrowDownUp, CheckCircle2 } from 'lucide-react';
+import { Search, Hash, Code2, Layers, RefreshCcw, ChevronDown, X, Settings, BookOpen, ArrowDownUp, CheckCircle2, Keyboard, AlertTriangle, Zap, Bookmark, ExternalLink } from 'lucide-react';
 import type { SearchFilters } from '../types/github';
 
 interface FilterBarProps {
@@ -40,8 +40,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, isLoading,
             label: updates.label !== undefined ? updates.label : label,
             sort: updates.sort !== undefined ? updates.sort : sort,
             state: updates.state !== undefined ? updates.state : state,
-            // Default order to desc unless specified? For now hardcode or add toggle later if requested.
-            // Let's stick to desc for 'newest' and 'most commented' usually.
             order: 'desc'
         };
 
@@ -59,29 +57,107 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, isLoading,
 
     return (
         <>
-            {/* Guide Modal */}
+            {/* Guide Modal - Revamped */}
             {isGuideOpen && (
-                <div className="sidebar-overlay open" style={{ zIndex: 150, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setIsGuideOpen(false)}>
-                    <div style={{ background: 'var(--color-bg-card)', padding: '2rem', borderRadius: 'var(--radius-lg)', maxWidth: '500px', width: '90%', border: '1px solid var(--color-border)', color: 'var(--color-text)', position: 'relative' }} onClick={e => e.stopPropagation()}>
-                        <button onClick={() => setIsGuideOpen(false)} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', color: 'var(--color-text-dim)', cursor: 'pointer' }}>
-                            <X size={20} />
-                        </button>
-                        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                            <BookOpen size={24} color="var(--color-primary)" />
-                            Quick Guide
-                        </h2>
-                        <div style={{ lineHeight: 1.6, fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
-                            <p style={{ marginBottom: '1rem' }}>Welcome to <strong>IssueFinder</strong>! Here is how to get started:</p>
-                            <ul style={{ paddingLeft: '1.2rem', marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                <li>Use the <strong>Language</strong> filter to find issues in your preferred stack.</li>
-                                <li>The <strong>Focus</strong> filter helps you find "Good First Issues" or specific labels.</li>
-                                <li>You can search by keyword in the <strong>Search</strong> bar.</li>
-                                <li>Click the <strong>Copy</strong> icon to grab the issue link, or the row to view details.</li>
-                            </ul>
-                            <p style={{ fontSize: '0.8rem', fontStyle: 'italic', color: 'var(--color-text-dim)' }}>PRO TIP: Hover over truncated titles to see the full content.</p>
+                <div className="sidebar-overlay open" style={{ zIndex: 150, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setIsGuideOpen(false)}>
+                    <div style={{ background: 'var(--color-bg-card)', padding: '0', borderRadius: 'var(--radius-lg)', maxWidth: '560px', width: '100%', border: '1px solid var(--color-border)', color: 'var(--color-text)', position: 'relative', maxHeight: '90vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
+
+                        {/* Header */}
+                        <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <div style={{ width: '40px', height: '40px', background: 'linear-gradient(135deg, var(--color-primary), #6366f1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <BookOpen size={20} color="white" />
+                                </div>
+                                <div>
+                                    <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>Getting Started</h2>
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--color-text-dim)', margin: 0 }}>Master IssueFinder in 2 minutes</p>
+                                </div>
+                            </div>
+                            <button onClick={() => setIsGuideOpen(false)} className="icon-btn"><X size={20} /></button>
                         </div>
-                        <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
-                            <button onClick={() => setIsGuideOpen(false)} className="load-more-btn" style={{ padding: '0.5rem 1.5rem' }}>Got it</button>
+
+                        {/* Content */}
+                        <div style={{ padding: '1.5rem', overflowY: 'auto', flex: 1 }}>
+                            {/* Quick Start */}
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <h3 style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <Zap size={14} /> Quick Start
+                                </h3>
+                                <div style={{ display: 'grid', gap: '0.75rem' }}>
+                                    <div style={{ display: 'flex', gap: '0.75rem', padding: '0.75rem', background: 'var(--color-bg-subtle)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                                        <div style={{ width: '28px', height: '28px', background: 'var(--color-bg-elevated)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                            <Layers size={14} color="var(--color-primary)" />
+                                        </div>
+                                        <div>
+                                            <p style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.15rem' }}>Pick a Language</p>
+                                            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Filter issues by your preferred programming language.</p>
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '0.75rem', padding: '0.75rem', background: 'var(--color-bg-subtle)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                                        <div style={{ width: '28px', height: '28px', background: 'var(--color-bg-elevated)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                            <Hash size={14} color="#22c55e" />
+                                        </div>
+                                        <div>
+                                            <p style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.15rem' }}>Choose a Focus</p>
+                                            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Start with "Good First Issue" for beginner-friendly tasks.</p>
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '0.75rem', padding: '0.75rem', background: 'var(--color-bg-subtle)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                                        <div style={{ width: '28px', height: '28px', background: 'var(--color-bg-elevated)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                            <Bookmark size={14} color="#eab308" />
+                                        </div>
+                                        <div>
+                                            <p style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.15rem' }}>Save for Later</p>
+                                            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Bookmark interesting issues to your Saved Collection.</p>
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '0.75rem', padding: '0.75rem', background: 'var(--color-bg-subtle)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                                        <div style={{ width: '28px', height: '28px', background: 'var(--color-bg-elevated)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                            <ExternalLink size={14} color="#3b82f6" />
+                                        </div>
+                                        <div>
+                                            <p style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.15rem' }}>Jump to GitHub</p>
+                                            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Click any issue to open it directly on GitHub.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Keyboard Shortcuts */}
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <h3 style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-dim)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <Keyboard size={14} /> Keyboard Shortcuts
+                                </h3>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                                    {[
+                                        { key: 'D', action: 'Discovery View' },
+                                        { key: 'S', action: 'Saved View' },
+                                        { key: 'T', action: 'Toggle Theme' },
+                                        { key: '/', action: 'Focus Search' },
+                                    ].map(shortcut => (
+                                        <div key={shortcut.key} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 0.75rem', background: 'var(--color-bg-subtle)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)' }}>
+                                            <kbd style={{ padding: '0.2rem 0.5rem', background: 'var(--color-bg-elevated)', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'var(--font-mono)', border: '1px solid var(--color-border)', minWidth: '24px', textAlign: 'center' }}>{shortcut.key}</kbd>
+                                            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{shortcut.action}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* API Rate Limit Warning */}
+                            <div style={{ padding: '0.875rem', background: 'rgba(234, 179, 8, 0.1)', border: '1px solid rgba(234, 179, 8, 0.2)', borderRadius: 'var(--radius-md)', display: 'flex', gap: '0.75rem' }}>
+                                <AlertTriangle size={18} color="#eab308" style={{ flexShrink: 0, marginTop: '2px' }} />
+                                <div>
+                                    <p style={{ fontWeight: 600, fontSize: '0.8rem', marginBottom: '0.25rem', color: '#eab308' }}>GitHub API Rate Limits</p>
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
+                                        Without a token: 10 requests/min. For higher limits, add a <code style={{ background: 'var(--color-bg-elevated)', padding: '0.1rem 0.3rem', borderRadius: '3px', fontSize: '0.7rem' }}>VITE_GITHUB_TOKEN</code> to your environment.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid var(--color-border)', background: 'var(--color-bg-subtle)' }}>
+                            <button onClick={() => setIsGuideOpen(false)} className="load-more-btn" style={{ width: '100%', justifyContent: 'center', padding: '0.6rem 1.5rem' }}>Got it, let's go!</button>
                         </div>
                     </div>
                 </div>
