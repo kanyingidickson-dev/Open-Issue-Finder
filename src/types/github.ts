@@ -2,6 +2,7 @@ export interface GitHubIssue {
     id: number;
     title: string;
     html_url: string;
+    state: 'open' | 'closed';
     user: {
         login: string;
         avatar_url: string;
