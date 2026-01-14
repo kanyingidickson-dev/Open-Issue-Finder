@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Github, Sparkles, AlertCircle, Loader2, LayoutGrid, Moon, Sun, X, Check, Bookmark, Trash2, Info } from 'lucide-react';
+import { Github, Sparkles, AlertCircle, Loader2, LayoutGrid, Moon, Sun, X, Check, Bookmark, Trash2, Info, Settings } from 'lucide-react';
 import { FilterBar } from './components/FilterBar';
 import { IssueRow } from './components/IssueRow';
 import { useIssues } from './hooks/useIssues';
@@ -121,55 +121,121 @@ function App() {
         </div>
       )}
 
-      {/* Settings Modal */}
+      {/* Settings Modal - Enhanced */}
       {isSettingsOpen && (
-        <div className="sidebar-overlay open" style={{ zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: 'var(--color-bg-card)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', width: '90%', maxWidth: '400px', padding: '1.5rem', boxShadow: '0 10px 40px rgba(0,0,0,0.3)', pointerEvents: 'auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h2 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Settings</h2>
+        <div className="sidebar-overlay open" style={{ zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setIsSettingsOpen(false)}>
+          <div style={{ background: 'var(--color-bg-card)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', width: '100%', maxWidth: '480px', boxShadow: '0 10px 40px rgba(0,0,0,0.3)', pointerEvents: 'auto', maxHeight: '90vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
+
+            {/* Header */}
+            <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ width: '40px', height: '40px', background: 'var(--color-bg-elevated)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--color-border)' }}>
+                  <Settings size={20} color="var(--color-text-muted)" />
+                </div>
+                <div>
+                  <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>Settings</h2>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--color-text-dim)', margin: 0 }}>Customize your experience</p>
+                </div>
+              </div>
               <button onClick={() => setIsSettingsOpen(false)} className="icon-btn"><X size={20} /></button>
             </div>
 
-            <div style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-dim)', marginBottom: '0.5rem' }}>APPLICATION THEME</label>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button
-                  onClick={() => setTheme('light')}
-                  style={{ flex: 1, padding: '0.6rem', borderRadius: 'var(--radius-md)', border: `1px solid ${theme === 'light' ? 'var(--color-primary)' : 'var(--color-border)'}`, background: 'var(--color-bg-subtle)', color: 'var(--color-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', cursor: 'pointer' }}
-                >
-                  <Sun size={16} /> Light {theme === 'light' && <Check size={14} color="var(--color-primary)" />}
-                </button>
-                <button
-                  onClick={() => setTheme('dark')}
-                  style={{ flex: 1, padding: '0.6rem', borderRadius: 'var(--radius-md)', border: `1px solid ${theme === 'dark' ? 'var(--color-primary)' : 'var(--color-border)'}`, background: 'var(--color-bg-subtle)', color: 'var(--color-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', cursor: 'pointer' }}
-                >
-                  <Moon size={16} /> Dark {theme === 'dark' && <Check size={14} color="var(--color-primary)" />}
-                </button>
+            {/* Content */}
+            <div style={{ padding: '1.5rem', overflowY: 'auto', flex: 1 }}>
+
+              {/* Appearance Section */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-dim)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>Appearance</h3>
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text)', marginBottom: '0.5rem' }}>Theme</label>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      onClick={() => setTheme('light')}
+                      style={{ flex: 1, padding: '0.75rem', borderRadius: 'var(--radius-md)', border: `2px solid ${theme === 'light' ? 'var(--color-primary)' : 'var(--color-border)'}`, background: theme === 'light' ? 'var(--color-primary-dim)' : 'var(--color-bg-subtle)', color: 'var(--color-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', cursor: 'pointer', transition: 'all 0.2s' }}
+                    >
+                      <Sun size={18} /> Light
+                    </button>
+                    <button
+                      onClick={() => setTheme('dark')}
+                      style={{ flex: 1, padding: '0.75rem', borderRadius: 'var(--radius-md)', border: `2px solid ${theme === 'dark' ? 'var(--color-primary)' : 'var(--color-border)'}`, background: theme === 'dark' ? 'var(--color-primary-dim)' : 'var(--color-bg-subtle)', color: 'var(--color-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', cursor: 'pointer', transition: 'all 0.2s' }}
+                    >
+                      <Moon size={18} /> Dark
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Display Section */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-dim)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>Display</h3>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text)', marginBottom: '0.5rem' }}>Issues Per Page</label>
+                  <select
+                    value={rowsPerPage}
+                    onChange={(e) => setRowsPerPage(Number(e.target.value))}
+                    className="custom-select"
+                    style={{ width: '100%' }}
+                  >
+                    <option value={10}>10 Issues</option>
+                    <option value={20}>20 Issues</option>
+                    <option value={30}>30 Issues (Default)</option>
+                    <option value={50}>50 Issues</option>
+                    <option value={100}>100 Issues</option>
+                  </select>
+                  <p style={{ fontSize: '0.7rem', color: 'var(--color-text-dim)', marginTop: '0.5rem' }}>
+                    Higher values may take longer to load.
+                  </p>
+                </div>
+              </div>
+
+              {/* Data Management */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-dim)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>Data Management</h3>
+                <div style={{ padding: '0.875rem', background: 'var(--color-bg-subtle)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                    <div>
+                      <p style={{ fontWeight: 600, fontSize: '0.85rem' }}>Saved Issues</p>
+                      <p style={{ fontSize: '0.7rem', color: 'var(--color-text-dim)' }}>{savedIssues.length} issues bookmarked locally</p>
+                    </div>
+                    <Bookmark size={20} color="var(--color-primary)" />
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      onClick={() => {
+                        const dataStr = JSON.stringify(savedIssues, null, 2);
+                        const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+                        const link = document.createElement('a');
+                        link.setAttribute('href', dataUri);
+                        link.setAttribute('download', 'issuefinder-saved.json');
+                        link.click();
+                        showToast('Saved issues exported!', 'success');
+                      }}
+                      disabled={savedIssues.length === 0}
+                      style={{ flex: 1, padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, background: 'var(--color-bg-elevated)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', cursor: savedIssues.length === 0 ? 'not-allowed' : 'pointer', opacity: savedIssues.length === 0 ? 0.5 : 1, color: 'var(--color-text)' }}
+                    >
+                      Export JSON
+                    </button>
+                    <button
+                      onClick={clearSaved}
+                      disabled={savedIssues.length === 0}
+                      style={{ flex: 1, padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: 'var(--radius-sm)', cursor: savedIssues.length === 0 ? 'not-allowed' : 'pointer', opacity: savedIssues.length === 0 ? 0.5 : 1, color: '#ef4444' }}
+                    >
+                      Clear All
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-dim)', marginBottom: '0.5rem' }}>ISSUES PER PAGE</label>
-              <select
-                value={rowsPerPage}
-                onChange={(e) => setRowsPerPage(Number(e.target.value))}
-                className="custom-select"
-                style={{ width: '100%' }}
-              >
-                <option value={10}>10 Issues</option>
-                <option value={20}>20 Issues</option>
-                <option value={30}>30 Issues</option>
-                <option value={50}>50 Issues</option>
-              </select>
-              <p style={{ fontSize: '0.75rem', color: 'var(--color-text-dim)', marginTop: '0.5rem' }}>
-                Note: Changing this will apply to next search.
-              </p>
-            </div>
-
-            <div style={{ paddingTop: '1rem', borderTop: '1px solid var(--color-border)' }}>
-              <p style={{ fontSize: '0.75rem', color: 'var(--color-text-dim)', textAlign: 'center' }}>
-                IssueFinder v2.0.0
-              </p>
+            {/* Footer */}
+            <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid var(--color-border)', background: 'var(--color-bg-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <p style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text)' }}>IssueFinder</p>
+                <p style={{ fontSize: '0.7rem', color: 'var(--color-text-dim)' }}>Version 2.0.0</p>
+              </div>
+              <a href="https://github.com/kanyingidickson-dev/Open-Issue-Finder" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.75rem', color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                <Github size={14} /> View on GitHub
+              </a>
             </div>
           </div>
         </div>
