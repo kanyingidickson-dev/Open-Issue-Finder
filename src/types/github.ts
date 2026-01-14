@@ -33,4 +33,10 @@ export type SearchFilters = {
     query?: string;
     sort?: 'created' | 'comments' | 'updated';
     order?: 'desc' | 'asc';
+    state?: 'open' | 'closed' | 'all';
+    perPage?: number;
 };
+
+export interface SavedIssue extends GitHubIssue {
+    savedAt: number;
+}
