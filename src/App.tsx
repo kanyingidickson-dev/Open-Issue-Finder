@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Github, Sparkles, AlertCircle, ChevronDown, Loader2, LayoutGrid, Activity } from 'lucide-react';
+import { Github, Sparkles, AlertCircle, Loader2, LayoutGrid, Activity } from 'lucide-react';
 import { FilterBar } from './components/FilterBar';
-import { IssueCard } from './components/IssueCard';
+import { IssueRow } from './components/IssueRow';
 import { useIssues } from './hooks/useIssues';
 import type { SearchFilters } from './types/github';
 
@@ -44,12 +44,30 @@ function App() {
         </header>
 
         {/* Content Area */}
-        <div className="content-grid">
+        <div className="content-wrapper">
           {loading && issues.length === 0 ? (
-            <div className="issues-grid">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="issue-card" style={{ height: '300px', opacity: 0.5, animation: 'pulse 2s infinite' }} />
-              ))}
+            <div className="issues-table-container">
+              <table className="issues-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: '220px' }}>Repository</th>
+                    <th>Issue</th>
+                    <th style={{ width: '150px' }}>Author</th>
+                    <th style={{ width: '100px', textAlign: 'center' }}>Comments</th>
+                    <th style={{ textAlign: 'right' }}>Created</th>
+                    <th style={{ width: '80px' }}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...Array(8)].map((_, i) => (
+                    <tr key={i} style={{ borderBottom: '1px solid var(--color-border)' }}>
+                      <td colSpan={6} style={{ padding: '1.5rem' }}>
+                        <div style={{ height: '24px', background: 'var(--color-bg-elevated)', borderRadius: '4px', opacity: 0.3, animation: 'pulse 1.5s infinite' }} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           ) : error ? (
             <div className="loader-container">
@@ -59,12 +77,24 @@ function App() {
             </div>
           ) : (
             <>
-              <div className="issues-grid">
-                {issues.map((issue, index) => (
-                  <div key={issue.id} className="animate-fade-in" style={{ animationDelay: `${(index % 9) * 0.05}s` }}>
-                    <IssueCard issue={issue} />
-                  </div>
-                ))}
+              <div className="issues-table-container">
+                <table className="issues-table">
+                  <thead>
+                    <tr>
+                      <th>Repository</th>
+                      <th>Issue</th>
+                      <th>Author</th>
+                      <th style={{ textAlign: 'center' }}>Comments</th>
+                      <th style={{ textAlign: 'right' }}>Created</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {issues.map((issue) => (
+                      <IssueRow key={issue.id} issue={issue} />
+                    ))}
+                  </tbody>
+                </table>
               </div>
 
               {hasMore && (
@@ -74,8 +104,7 @@ function App() {
                     disabled={loadingMore}
                     className="load-more-btn"
                   >
-                    {loadingMore ? <Loader2 className="animate-spin" size={18} /> : <span>Load More Issues</span>}
-                    {!loadingMore && <ChevronDown size={18} />}
+                    {loadingMore ? <Loader2 className="animate-spin" size={16} /> : <span>Load More Issues</span>}
                   </button>
                 </div>
               )}

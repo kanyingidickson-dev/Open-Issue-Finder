@@ -16,6 +16,7 @@ export interface GitHubIssue {
     created_at: string;
     body: string | null;
     comments: number;
+    number: number;
 }
 
 export interface RepositoryMetadata {
