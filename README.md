@@ -8,6 +8,7 @@ A production-grade discovery tool for finding beginner-friendly open-source issu
 - **Smart Filtering**: Filter by language, labels (e.g., `good first issue`, `help wanted`), sort order, and specific issue/state status.
 - **Saved Collections**: Bookmark interesting issues locally to review or tackle later.
 - **View Modes**: Switch between "Discovery" mode and your "Saved Collection".
+- **Keyboard Shortcuts**: Power-user friendly with shortcuts (`d` for Discovery, `s` for Saved, `t` for theme toggle, `/` for search).
 - **Premium UI/UX**: Dark-mode first design with glassmorphism aesthetics, smooth transitions, and toast notifications.
 - **Responsive Design**: Fully optimized for mobile, tablet, and desktop viewing.
 
