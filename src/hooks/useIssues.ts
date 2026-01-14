@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { fetchIssues } from '../api/github';
 import type { GitHubIssue, SearchFilters } from '../types/github';
+import { useDebounce } from './useDebounce';
 
 export const useIssues = (filters: SearchFilters) => {
     const [issues, setIssues] = useState<GitHubIssue[]>([]);
@@ -9,6 +10,9 @@ export const useIssues = (filters: SearchFilters) => {
     const [page, setPage] = useState(1);
     const [error, setError] = useState<string | null>(null);
     const [hasMore, setHasMore] = useState(true);
+
+    // Debounce the query to avoid excessive API calls
+    const debouncedQuery = useDebounce(filters.query, 300);
 
     const loadIssues = useCallback(async (isMore = false) => {
         if (isMore) {
@@ -21,7 +25,10 @@ export const useIssues = (filters: SearchFilters) => {
         setError(null);
         try {
             const currentPage = isMore ? page + 1 : 1;
-            const data = await fetchIssues(filters, currentPage);
+            const data = await fetchIssues({
+                ...filters,
+                query: debouncedQuery
+            }, currentPage);
             const newIssues = data as GitHubIssue[];
 
             if (isMore) {
@@ -31,14 +38,16 @@ export const useIssues = (filters: SearchFilters) => {
                 setIssues(newIssues);
             }
 
-            setHasMore(newIssues.length === 30);
+            const perPage = filters.perPage || 30;
+            setHasMore(newIssues.length === perPage);
         } catch (err) {
+            console.error('Failed to fetch issues:', err);
             setError('Failed to fetch issues. Please try again later.');
         } finally {
             setLoading(false);
             setLoadingMore(false);
         }
-    }, [filters.language, filters.label, filters.query, page]);
+    }, [filters.language, filters.label, debouncedQuery, filters.sort, filters.order, filters.state, filters.perPage, page]);
 
     const loadMore = () => {
         if (!loading && !loadingMore && hasMore) {
@@ -48,7 +57,8 @@ export const useIssues = (filters: SearchFilters) => {
 
     useEffect(() => {
         loadIssues();
-    }, [filters.language, filters.label, filters.query]);
+    }, [filters.language, filters.label, debouncedQuery, filters.sort, filters.order, filters.state, filters.perPage]);
 
     return { issues, loading, loadingMore, error, hasMore, refetch: loadIssues, loadMore };
 };
+
