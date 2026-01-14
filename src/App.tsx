@@ -7,23 +7,35 @@ import type { SearchFilters } from './types/github';
 
 function App() {
   const [filters, setFilters] = useState<SearchFilters>({ label: 'good first issue' });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { issues, loading, loadingMore, error, hasMore, loadMore } = useIssues(filters);
 
-  const handleFilterChange = (newFilters: SearchFilters) => setFilters(newFilters);
+  const handleFilterChange = (newFilters: SearchFilters) => {
+    setFilters(newFilters);
+    setIsSidebarOpen(false); // Close sidebar on filter change
+  };
 
   return (
     <div className="dashboard-grid">
-      <FilterBar onFilterChange={handleFilterChange} isLoading={loading} />
+      <FilterBar
+        onFilterChange={handleFilterChange}
+        isLoading={loading}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
 
       <main className="main-content">
         {/* Dynamic Header */}
         <header className="app-header">
           <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div className="lg:hidden" style={{ width: '32px', height: '32px', background: 'var(--color-primary)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Sparkles size={16} color="white" />
-            </div>
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="lg:hidden"
+              style={{ width: '32px', height: '32px', background: 'var(--color-bg-elevated)', border: '1px solid var(--color-border)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--color-text)' }}>
+              <LayoutGrid size={18} />
+            </button>
             <div className="title">
-              <LayoutGrid size={16} color="var(--color-primary)" />
+              {/* <LayoutGrid size={16} color="var(--color-primary)" /> */}
               <h2>Discovery Pipeline</h2>
             </div>
             <div className="status-badge">
@@ -74,6 +86,19 @@ function App() {
               <AlertCircle size={48} color="#ef4444" style={{ marginBottom: '1.5rem' }} />
               <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>Sync Failure</h3>
               <p style={{ color: 'var(--color-text-muted)' }}>{error}</p>
+            </div>
+          ) : issues.length === 0 ? (
+            /* Empty State */
+            <div className="loader-container">
+              <div style={{ padding: '2rem', background: 'var(--color-bg-subtle)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', maxWidth: '400px' }}>
+                <div style={{ width: '48px', height: '48px', background: 'var(--color-bg-elevated)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto' }}>
+                  <Sparkles size={24} color="var(--color-text-dim)" />
+                </div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>No Issues Found</h3>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', lineHeight: '1.5' }}>
+                  We couldn't find any issues matching your specific filters. Try adjusting your search query or selecting a different language.
+                </p>
+              </div>
             </div>
           ) : (
             <>
