@@ -4,26 +4,28 @@ import type { SearchFilters } from '../types/github';
 
 interface FilterBarProps {
     onFilterChange: (filters: SearchFilters) => void;
+    activeFilters?: SearchFilters;
     isLoading?: boolean;
     isOpen?: boolean;
     onClose?: () => void;
     onOpenSettings: () => void;
 }
 
-export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, isLoading, isOpen = false, onClose, onOpenSettings }) => {
-    const [query, setQuery] = React.useState('');
-    const [language, setLanguage] = React.useState('');
-    const [label, setLabel] = React.useState('');
-    const [sort, setSort] = React.useState<'created' | 'comments' | 'updated'>('created');
-    const [state, setState] = React.useState<'open' | 'closed' | 'all'>('open');
+export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, activeFilters, isLoading, isOpen = false, onClose, onOpenSettings }) => {
     const [isGuideOpen, setIsGuideOpen] = useState(false);
+
+    const query = activeFilters?.query || '';
+    const language = activeFilters?.language || '';
+    const label = activeFilters?.label || '';
+    const sort = activeFilters?.sort || 'created';
+    const state = activeFilters?.state || 'open';
 
     const labels = [
         { label: 'All Issues', value: '' },
-        { label: 'Good First Issue', value: 'good first issue' },
-        { label: 'Help Wanted', value: 'help wanted' },
+        { label: 'Beginner Friendly', value: 'beginner' },
+        { label: 'Help Wanted', value: 'help_wanted' },
         { label: 'Bug', value: 'bug' },
-        { label: 'Documentation', value: 'documentation' },
+        { label: 'Documentation', value: 'docs' },
         { label: 'Enhancement', value: 'enhancement' },
     ];
 
@@ -31,6 +33,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, isLoading,
         { label: 'Newest', value: 'created' },
         { label: 'Most Commented', value: 'comments' },
         { label: 'Recently Updated', value: 'updated' },
+        { label: 'Health Score', value: 'health' },
     ];
 
     const handleFilterUpdate = (updates: Partial<SearchFilters>) => {
@@ -47,11 +50,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, isLoading,
     };
 
     const clearAll = () => {
-        setQuery('');
-        setLanguage('');
-        setLabel('');
-        setSort('created');
-        setState('open');
         handleFilterUpdate({ query: '', language: '', label: '', sort: 'created', state: 'open' });
     }
 
@@ -199,7 +197,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, isLoading,
                                 className="custom-select"
                                 value={language}
                                 onChange={(e) => {
-                                    setLanguage(e.target.value);
                                     handleFilterUpdate({ language: e.target.value });
                                 }}
                             >
@@ -234,7 +231,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, isLoading,
                                 className="custom-select"
                                 value={label}
                                 onChange={(e) => {
-                                    setLabel(e.target.value);
                                     handleFilterUpdate({ label: e.target.value });
                                 }}
                             >
@@ -256,14 +252,12 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, isLoading,
                                 className="custom-select"
                                 value={state}
                                 onChange={(e) => {
-                                    const val = e.target.value as 'open' | 'closed' | 'all';
-                                    setState(val);
-                                    handleFilterUpdate({ state: val });
+                                    handleFilterUpdate({ state: e.target.value as 'open' | 'closed' | 'all' });
                                 }}
                             >
-                                <option value="open">Open Issues</option>
-                                <option value="closed">Closed Issues</option>
-                                <option value="all">All Issues</option>
+                                <option value="open">Open</option>
+                                <option value="closed">Closed</option>
+                                <option value="all">All</option>
                             </select>
                             <ChevronDown className="select-icon" size={14} />
                         </div>
@@ -272,20 +266,18 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, isLoading,
                     {/* Sort Section */}
                     <div className="filter-group">
                         <label className="section-label">
-                            <ArrowDownUp size={12} /> Sort By
+                            <ArrowDownUp size={12} /> Sort
                         </label>
                         <div className="custom-select-wrapper">
                             <select
                                 className="custom-select"
                                 value={sort}
                                 onChange={(e) => {
-                                    const val = e.target.value as 'created' | 'comments' | 'updated';
-                                    setSort(val);
-                                    handleFilterUpdate({ sort: val });
+                                    handleFilterUpdate({ sort: e.target.value as 'created' | 'comments' | 'updated' | 'health' });
                                 }}
                             >
-                                {sortOptions.map((s) => (
-                                    <option key={s.value} value={s.value}>{s.label}</option>
+                                {sortOptions.map((o) => (
+                                    <option key={o.value} value={o.value}>{o.label}</option>
                                 ))}
                             </select>
                             <ChevronDown className="select-icon" size={14} />
@@ -293,38 +285,46 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, isLoading,
                     </div>
 
                     {/* Search Section */}
-                    <div className="filter-group" style={{ marginTop: 'auto' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                            <label className="section-label" style={{ marginBottom: 0 }}>
-                                <Search size={12} /> Search
-                            </label>
-                            {(query || language || label || state !== 'open' || sort !== 'created') && (
-                                <button
-                                    onClick={clearAll}
-                                    style={{ fontSize: '0.65rem', color: 'var(--color-primary)', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 600, padding: 0 }}
-                                >
-                                    Reset Filters
-                                </button>
-                            )}
-                        </div>
-                        <div className="search-wrapper">
+                    <div className="filter-group">
+                        <label className="section-label">
+                            <Search size={12} /> Search
+                        </label>
+                        <div className="search-box">
+                            <Search className="search-icon" size={16} />
                             <input
                                 type="text"
-                                placeholder="Keywords..."
+                                placeholder="Search issues..."
                                 className="search-input"
                                 value={query}
                                 onChange={(e) => {
-                                    setQuery(e.target.value);
                                     handleFilterUpdate({ query: e.target.value });
                                 }}
                             />
-                            {isLoading && (
-                                <div style={{ position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)' }}>
-                                    <RefreshCcw className="animate-spin" size={14} color="var(--color-primary)" />
-                                </div>
+                            {query && (
+                                <button
+                                    className="icon-btn"
+                                    type="button"
+                                    onClick={() => handleFilterUpdate({ query: '' })}
+                                    style={{ width: '28px', height: '28px' }}
+                                    title="Clear search"
+                                >
+                                    <X size={14} />
+                                </button>
                             )}
                         </div>
                     </div>
+
+                    {/* Actions */}
+                    <button
+                        type="button"
+                        className="load-more-btn"
+                        onClick={clearAll}
+                        disabled={Boolean(isLoading)}
+                        style={{ width: '100%', justifyContent: 'center', padding: '0.6rem 1.5rem', opacity: isLoading ? 0.7 : 1 }}
+                    >
+                        <RefreshCcw size={14} />
+                        Reset Filters
+                    </button>
                 </div>
 
                 {/* Sidebar Footer with Settings */}

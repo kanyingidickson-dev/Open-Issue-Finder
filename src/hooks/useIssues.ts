@@ -11,6 +11,8 @@ export const useIssues = (filters: SearchFilters) => {
     const [error, setError] = useState<string | null>(null);
     const [hasMore, setHasMore] = useState(true);
 
+    const { language, label, sort, order, state, perPage } = filters;
+
     // Debounce the query to avoid excessive API calls
     const debouncedQuery = useDebounce(filters.query, 300);
 
@@ -26,7 +28,12 @@ export const useIssues = (filters: SearchFilters) => {
         try {
             const currentPage = isMore ? page + 1 : 1;
             const data = await fetchIssues({
-                ...filters,
+                language,
+                label,
+                sort,
+                order,
+                state,
+                perPage,
                 query: debouncedQuery
             }, currentPage);
             const newIssues = data as GitHubIssue[];
@@ -38,8 +45,8 @@ export const useIssues = (filters: SearchFilters) => {
                 setIssues(newIssues);
             }
 
-            const perPage = filters.perPage || 30;
-            setHasMore(newIssues.length === perPage);
+            const effectivePerPage = perPage || 30;
+            setHasMore(newIssues.length === effectivePerPage);
         } catch (err) {
             console.error('Failed to fetch issues:', err);
             setError('Failed to fetch issues. Please try again later.');
@@ -47,7 +54,7 @@ export const useIssues = (filters: SearchFilters) => {
             setLoading(false);
             setLoadingMore(false);
         }
-    }, [filters.language, filters.label, debouncedQuery, filters.sort, filters.order, filters.state, filters.perPage, page]);
+    }, [debouncedQuery, label, language, order, page, perPage, sort, state]);
 
     const loadMore = () => {
         if (!loading && !loadingMore && hasMore) {
@@ -57,7 +64,7 @@ export const useIssues = (filters: SearchFilters) => {
 
     useEffect(() => {
         loadIssues();
-    }, [filters.language, filters.label, debouncedQuery, filters.sort, filters.order, filters.state, filters.perPage]);
+    }, [loadIssues]);
 
     return { issues, loading, loadingMore, error, hasMore, refetch: loadIssues, loadMore };
 };
