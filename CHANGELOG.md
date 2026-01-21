@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 > Note: Tags for versions prior to v2.0.0 were not created in Git.
 
+## [2.1.0] - 2026-01-21
+
+### Added
+- URL-synced filters for shareable and persistent state
+- Saved searches for quick reuse
+- Repository health scoring
+
+### Technical / Dev
+- Vitest setup with initial GitHub API tests
+- CI workflows and contribution templates
+- Fixed GitHub Pages asset paths and improved environment typings
+
+### Documentation
+- Polished README
+- Added backend roadmap
+
+### Notes
+- No breaking changes
+- Builds on v2.0.0 features
+
 ## [2.0.0] - 2026-01-14
 
 ### Added

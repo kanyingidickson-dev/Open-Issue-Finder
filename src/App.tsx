@@ -66,7 +66,10 @@ const getInitialStateFromUrl = (): { filters: SearchFilters; perPage: number } =
 function App() {
   const [filters, setFilters] = useState<SearchFilters>(() => getInitialStateFromUrl().filters);
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    return window.matchMedia('(min-width: 1024px)').matches;
+  });
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(() => getInitialStateFromUrl().perPage);
@@ -514,7 +517,7 @@ function App() {
             <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid var(--color-border)', background: 'var(--color-bg-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <p style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text)' }}>IssueFinder</p>
-                <p style={{ fontSize: '0.7rem', color: 'var(--color-text-dim)' }}>Version 2.0.0</p>
+                <p style={{ fontSize: '0.7rem', color: 'var(--color-text-dim)' }}>Version 2.1.0</p>
               </div>
               <a href="https://github.com/kanyingidickson-dev/Open-Issue-Finder" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.75rem', color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                 <Github size={14} /> View on GitHub
@@ -529,8 +532,8 @@ function App() {
         <header className="app-header">
           <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="hidden-desktop icon-btn"
+              onClick={() => setIsSidebarOpen((prev) => !prev)}
+              className="icon-btn"
               style={{ border: '1px solid var(--color-border)', borderRadius: '8px' }}>
               <LayoutGrid size={18} />
             </button>

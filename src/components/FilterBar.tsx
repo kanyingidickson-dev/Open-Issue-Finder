@@ -1,6 +1,103 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Search, Hash, Code2, Layers, RefreshCcw, ChevronDown, X, Settings, BookOpen, ArrowDownUp, CheckCircle2, Keyboard, AlertTriangle, Zap, Bookmark, ExternalLink } from 'lucide-react';
 import type { SearchFilters } from '../types/github';
+
+type SelectOption = { label: string; value: string };
+
+interface HoverSelectProps {
+    value: string;
+    options: SelectOption[];
+    onChange: (value: string) => void;
+    placeholder?: string;
+    disabled?: boolean;
+}
+
+const HoverSelect: React.FC<HoverSelectProps> = ({ value, options, onChange, placeholder, disabled }) => {
+    const [open, setOpen] = useState(false);
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+    const selectedLabel = useMemo(() => {
+        const found = options.find((o) => o.value === value);
+        return found ? found.label : (placeholder ?? 'Select...');
+    }, [options, placeholder, value]);
+
+    useEffect(() => {
+        if (!open) return;
+
+        const onDocMouseDown = (e: MouseEvent) => {
+            const el = wrapperRef.current;
+            if (!el) return;
+            if (e.target instanceof Node && !el.contains(e.target)) {
+                setOpen(false);
+            }
+        };
+
+        const onDocKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setOpen(false);
+        };
+
+        document.addEventListener('mousedown', onDocMouseDown);
+        document.addEventListener('keydown', onDocKeyDown);
+        return () => {
+            document.removeEventListener('mousedown', onDocMouseDown);
+            document.removeEventListener('keydown', onDocKeyDown);
+        };
+    }, [open]);
+
+    return (
+        <div
+            ref={wrapperRef}
+            className="hover-select"
+            onMouseEnter={() => setOpen(true)}
+            onMouseLeave={() => setOpen(false)}
+        >
+            <button
+                type="button"
+                className="custom-select hover-select-trigger"
+                disabled={disabled}
+                aria-haspopup="listbox"
+                aria-expanded={open}
+                onClick={() => setOpen((prev) => !prev)}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setOpen((prev) => !prev);
+                    }
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        setOpen(true);
+                    }
+                    if (e.key === 'Escape') {
+                        setOpen(false);
+                    }
+                }}
+            >
+                {selectedLabel}
+            </button>
+            <ChevronDown className="select-icon" size={14} />
+
+            {open && (
+                <div className="hover-select-menu" role="listbox">
+                    {options.map((o) => (
+                        <button
+                            key={o.value}
+                            type="button"
+                            role="option"
+                            aria-selected={o.value === value}
+                            className={`hover-select-option ${o.value === value ? 'active' : ''}`}
+                            onClick={() => {
+                                onChange(o.value);
+                                setOpen(false);
+                            }}
+                        >
+                            {o.label}
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
 
 interface FilterBarProps {
     onFilterChange: (filters: SearchFilters) => void;
@@ -14,13 +111,36 @@ interface FilterBarProps {
 export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, activeFilters, isLoading, isOpen = false, onClose, onOpenSettings }) => {
     const [isGuideOpen, setIsGuideOpen] = useState(false);
 
+    const handleClose = () => {
+        onClose?.();
+    };
+
     const query = activeFilters?.query || '';
     const language = activeFilters?.language || '';
     const label = activeFilters?.label || '';
     const sort = activeFilters?.sort || 'created';
     const state = activeFilters?.state || 'open';
 
-    const labels = [
+    const languageOptions: SelectOption[] = [
+        { label: 'All Languages', value: '' },
+        { label: 'TypeScript', value: 'typescript' },
+        { label: 'JavaScript', value: 'javascript' },
+        { label: 'Python', value: 'python' },
+        { label: 'Rust', value: 'rust' },
+        { label: 'Go', value: 'go' },
+        { label: 'Java', value: 'java' },
+        { label: 'C++', value: 'c++' },
+        { label: 'C#', value: 'c#' },
+        { label: 'PHP', value: 'php' },
+        { label: 'Ruby', value: 'ruby' },
+        { label: 'Swift', value: 'swift' },
+        { label: 'Kotlin', value: 'kotlin' },
+        { label: 'Dart', value: 'dart' },
+        { label: 'Scala', value: 'scala' },
+        { label: 'Elixir', value: 'elixir' },
+    ];
+
+    const labels: SelectOption[] = [
         { label: 'All Issues', value: '' },
         { label: 'Beginner Friendly', value: 'beginner' },
         { label: 'Help Wanted', value: 'help_wanted' },
@@ -29,7 +149,13 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, activeFilt
         { label: 'Enhancement', value: 'enhancement' },
     ];
 
-    const sortOptions = [
+    const stateOptions: SelectOption[] = [
+        { label: 'Open', value: 'open' },
+        { label: 'Closed', value: 'closed' },
+        { label: 'All', value: 'all' },
+    ];
+
+    const sortOptions: SelectOption[] = [
         { label: 'Newest', value: 'created' },
         { label: 'Most Commented', value: 'comments' },
         { label: 'Recently Updated', value: 'updated' },
@@ -164,10 +290,10 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, activeFilt
             {/* Mobile Overlay */}
             <div
                 className={`sidebar-overlay ${isOpen ? 'open' : ''}`}
-                onClick={onClose}
+                onClick={handleClose}
             />
 
-            <aside className={`sidebar ${isOpen ? 'mobile-open' : ''}`}>
+            <aside className={`sidebar ${isOpen ? 'mobile-open' : ''} ${isOpen ? '' : 'collapsed'}`}>
                 <div className="sidebar-header" style={{ paddingBottom: '1rem' }}>
                     <div className="flex items-center gap-3">
                         <div className="logo-box">
@@ -175,12 +301,14 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, activeFilt
                         </div>
                         <div>
                             <h1 className="font-bold" style={{ fontSize: '1.25rem', lineHeight: 1 }}>IssueFinder</h1>
-                            <p className="font-mono text-xs" style={{ color: 'var(--color-primary)', marginTop: '0.25rem', opacity: 0.9 }}>v2.0.0</p>
+                            <p className="font-mono text-xs" style={{ color: 'var(--color-primary)', marginTop: '0.25rem', opacity: 0.9 }}>v2.1.0</p>
                         </div>
                     </div>
                     <button
-                        className="icon-btn lg:hidden ml-auto"
-                        onClick={onClose}
+                        className="icon-btn"
+                        onClick={handleClose}
+                        type="button"
+                        style={{ marginLeft: 'auto' }}
                     >
                         <X size={20} />
                     </button>
@@ -193,31 +321,13 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, activeFilt
                             <Layers size={12} /> Language
                         </label>
                         <div className="custom-select-wrapper">
-                            <select
-                                className="custom-select"
+                            <HoverSelect
                                 value={language}
-                                onChange={(e) => {
-                                    handleFilterUpdate({ language: e.target.value });
-                                }}
-                            >
-                                <option value="">All Languages</option>
-                                <option value="typescript">TypeScript</option>
-                                <option value="javascript">JavaScript</option>
-                                <option value="python">Python</option>
-                                <option value="rust">Rust</option>
-                                <option value="go">Go</option>
-                                <option value="java">Java</option>
-                                <option value="c++">C++</option>
-                                <option value="c#">C#</option>
-                                <option value="php">PHP</option>
-                                <option value="ruby">Ruby</option>
-                                <option value="swift">Swift</option>
-                                <option value="kotlin">Kotlin</option>
-                                <option value="dart">Dart</option>
-                                <option value="scala">Scala</option>
-                                <option value="elixir">Elixir</option>
-                            </select>
-                            <ChevronDown className="select-icon" size={14} />
+                                options={languageOptions}
+                                onChange={(next) => handleFilterUpdate({ language: next })}
+                                placeholder="All Languages"
+                                disabled={Boolean(isLoading)}
+                            />
                         </div>
                     </div>
 
@@ -227,18 +337,13 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, activeFilt
                             <Hash size={12} /> Focus
                         </label>
                         <div className="custom-select-wrapper">
-                            <select
-                                className="custom-select"
+                            <HoverSelect
                                 value={label}
-                                onChange={(e) => {
-                                    handleFilterUpdate({ label: e.target.value });
-                                }}
-                            >
-                                {labels.map((l) => (
-                                    <option key={l.value} value={l.value}>{l.label}</option>
-                                ))}
-                            </select>
-                            <ChevronDown className="select-icon" size={14} />
+                                options={labels}
+                                onChange={(next) => handleFilterUpdate({ label: next })}
+                                placeholder="All Issues"
+                                disabled={Boolean(isLoading)}
+                            />
                         </div>
                     </div>
 
@@ -248,18 +353,13 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, activeFilt
                             <CheckCircle2 size={12} /> Status
                         </label>
                         <div className="custom-select-wrapper">
-                            <select
-                                className="custom-select"
+                            <HoverSelect
                                 value={state}
-                                onChange={(e) => {
-                                    handleFilterUpdate({ state: e.target.value as 'open' | 'closed' | 'all' });
-                                }}
-                            >
-                                <option value="open">Open</option>
-                                <option value="closed">Closed</option>
-                                <option value="all">All</option>
-                            </select>
-                            <ChevronDown className="select-icon" size={14} />
+                                options={stateOptions}
+                                onChange={(next) => handleFilterUpdate({ state: next as 'open' | 'closed' | 'all' })}
+                                placeholder="Open"
+                                disabled={Boolean(isLoading)}
+                            />
                         </div>
                     </div>
 
@@ -269,18 +369,13 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, activeFilt
                             <ArrowDownUp size={12} /> Sort
                         </label>
                         <div className="custom-select-wrapper">
-                            <select
-                                className="custom-select"
+                            <HoverSelect
                                 value={sort}
-                                onChange={(e) => {
-                                    handleFilterUpdate({ sort: e.target.value as 'created' | 'comments' | 'updated' | 'health' });
-                                }}
-                            >
-                                {sortOptions.map((o) => (
-                                    <option key={o.value} value={o.value}>{o.label}</option>
-                                ))}
-                            </select>
-                            <ChevronDown className="select-icon" size={14} />
+                                options={sortOptions}
+                                onChange={(next) => handleFilterUpdate({ sort: next as 'created' | 'comments' | 'updated' | 'health' })}
+                                placeholder="Newest"
+                                disabled={Boolean(isLoading)}
+                            />
                         </div>
                     </div>
 
