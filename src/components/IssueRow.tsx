@@ -4,6 +4,7 @@ import type { GitHubIssue } from '../types/github';
 
 interface IssueRowProps {
     issue: GitHubIssue;
+    healthScore?: number;
     isSaved: boolean;
     onToggleSave: (issue: GitHubIssue) => void;
 }
@@ -19,7 +20,7 @@ const getLabelColor = (name: string, defaultColor: string) => {
     return defaultColor;
 };
 
-export const IssueRow: React.FC<IssueRowProps> = ({ issue, isSaved, onToggleSave }) => {
+export const IssueRow: React.FC<IssueRowProps> = ({ issue, healthScore, isSaved, onToggleSave }) => {
     const [copied, setCopied] = React.useState(false);
 
     const createdAt = new Date(issue.created_at).toLocaleDateString('en-US', {
@@ -29,6 +30,15 @@ export const IssueRow: React.FC<IssueRowProps> = ({ issue, isSaved, onToggleSave
     });
 
     const [owner, repo] = issue.repository_url.split('/').slice(-2);
+
+    const healthLabel = typeof healthScore === 'number' ? Math.round(healthScore) : null;
+    const healthColor = healthLabel === null
+        ? 'var(--color-text-dim)'
+        : healthLabel >= 70
+            ? '#22c55e'
+            : healthLabel >= 40
+                ? '#eab308'
+                : '#ef4444';
 
     const timeAgo = (dateStr: string) => {
         const date = new Date(dateStr);
@@ -85,9 +95,28 @@ export const IssueRow: React.FC<IssueRowProps> = ({ issue, isSaved, onToggleSave
                         <span className="text-dim text-xs truncate" title={owner}>
                             {owner}
                         </span>
-                        <span className="font-bold text-white text-sm truncate" title={repo}>
-                            {repo}
-                        </span>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+                            <span className="font-bold text-white text-sm truncate" title={repo}>
+                                {repo}
+                            </span>
+                            {healthLabel !== null && (
+                                <span
+                                    title="Repository health score"
+                                    style={{
+                                        fontSize: '10px',
+                                        fontWeight: 800,
+                                        padding: '0.15rem 0.35rem',
+                                        borderRadius: '6px',
+                                        border: `1px solid ${healthColor}33`,
+                                        background: `${healthColor}14`,
+                                        color: healthColor,
+                                        flexShrink: 0,
+                                    }}
+                                >
+                                    {healthLabel}
+                                </span>
+                            )}
+                        </div>
                     </div>
                 </div>
             </td>
@@ -104,7 +133,7 @@ export const IssueRow: React.FC<IssueRowProps> = ({ issue, isSaved, onToggleSave
                                 Closed
                             </span>
                         )}
-                        {issue.labels?.slice(0, 3).map((label: any) => (
+                        {issue.labels?.slice(0, 3).map((label: GitHubIssue['labels'][number]) => (
                             <span
                                 key={label.id || label.name}
                                 className="table-label"

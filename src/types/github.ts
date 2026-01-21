@@ -32,11 +32,18 @@ export type SearchFilters = {
     language?: string;
     label?: string;
     query?: string;
-    sort?: 'created' | 'comments' | 'updated';
+    sort?: 'created' | 'comments' | 'updated' | 'health';
     order?: 'desc' | 'asc';
     state?: 'open' | 'closed' | 'all';
     perPage?: number;
 };
+
+export interface SavedSearch {
+    id: string;
+    name: string;
+    filters: SearchFilters;
+    createdAt: number;
+}
 
 export interface SavedIssue extends GitHubIssue {
     savedAt: number;

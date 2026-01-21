@@ -1,15 +1,53 @@
 import { Octokit } from '@octokit/rest';
 
+const getGithubToken = () => {
+    const metaEnv = (import.meta as unknown as { env?: { VITE_GITHUB_TOKEN?: string } }).env;
+    if (metaEnv?.VITE_GITHUB_TOKEN) return metaEnv.VITE_GITHUB_TOKEN;
+
+    return undefined;
+};
+
 const octokit = new Octokit({
-    auth: import.meta.env.VITE_GITHUB_TOKEN || undefined,
+    auth: getGithubToken(),
 });
 
-export const fetchIssues = async (filters: { language?: string; label?: string; query?: string; sort?: 'created' | 'comments' | 'updated'; order?: 'desc' | 'asc'; state?: 'open' | 'closed' | 'all'; perPage?: number }, page = 1) => {
+const buildLabelClause = (label: string) => {
+    const normalized = label.trim().toLowerCase();
+
+    const variants: Record<string, string[]> = {
+        beginner: [
+            'good first issue',
+            'good-first-issue',
+            'beginner',
+            'beginner friendly',
+            'easy',
+            'starter',
+            'first-timers-only',
+            'up-for-grabs',
+        ],
+        help_wanted: ['help wanted', 'help-wanted'],
+        docs: ['documentation', 'docs'],
+        enhancement: ['enhancement', 'feature', 'feature request'],
+        bug: ['bug', 'type: bug'],
+    };
+
+    if (!normalized) return '';
+
+    const expanded = variants[normalized];
+    if (!expanded) {
+        return ` label:"${label}"`;
+    }
+
+    const orParts = expanded.map(v => `label:"${v}"`).join(' OR ');
+    return ` (${orParts})`;
+};
+
+export const fetchIssues = async (filters: { language?: string; label?: string; query?: string; sort?: 'created' | 'comments' | 'updated' | 'health'; order?: 'desc' | 'asc'; state?: 'open' | 'closed' | 'all'; perPage?: number }, page = 1) => {
     const state = filters.state || 'open';
     let queryString = `is:${state} is:issue`;
 
     if (filters.label) {
-        queryString += ` label:"${filters.label}"`;
+        queryString += buildLabelClause(filters.label);
     }
 
     if (filters.language) {
@@ -25,9 +63,10 @@ export const fetchIssues = async (filters: { language?: string; label?: string; 
     queryString += ' archived:false';
 
     try {
+        const sort = filters.sort === 'health' ? 'updated' : (filters.sort || 'created');
         const { data } = await octokit.rest.search.issuesAndPullRequests({
             q: queryString,
-            sort: filters.sort || 'created',
+            sort,
             order: filters.order || 'desc',
             per_page: filters.perPage || 30,
             page,
