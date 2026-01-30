@@ -21,6 +21,15 @@ const createSavedSearchId = () => {
 
 const nowMs = () => Date.now();
 
+const safeJsonParse = <T,>(value: string | null, fallback: T): T => {
+  if (!value) return fallback;
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return fallback;
+  }
+};
+
 const DEFAULT_FILTERS: SearchFilters = {
   query: '',
   language: '',
@@ -76,18 +85,18 @@ function App() {
   const [view, setView] = useState<'discover' | 'saved'>('discover');
   const [savedIssues, setSavedIssues] = useState<SavedIssue[]>(() => {
     const saved = localStorage.getItem('issuefinder_saved');
-    return saved ? JSON.parse(saved) : [];
+    return safeJsonParse<SavedIssue[]>(saved, []);
   });
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>(() => {
     const raw = localStorage.getItem('issuefinder_saved_searches');
-    return raw ? JSON.parse(raw) : [];
+    return safeJsonParse<SavedSearch[]>(raw, []);
   });
   const [newSearchName, setNewSearchName] = useState('');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null);
 
   const [repoHealth, setRepoHealth] = useState<Record<string, { score: number; fetchedAt: number }>>(() => {
     const raw = localStorage.getItem('issuefinder_repo_health');
-    return raw ? JSON.parse(raw) : {};
+    return safeJsonParse<Record<string, { score: number; fetchedAt: number }>>(raw, {});
   });
 
   const { issues, loading, loadingMore, error, hasMore, loadMore } = useIssues({ ...filters, perPage: rowsPerPage });
@@ -215,6 +224,15 @@ function App() {
 
     next.hash = window.location.hash;
     return next.toString();
+  };
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   const saveCurrentSearch = () => {
@@ -489,8 +507,10 @@ function App() {
                             <button
                               onClick={() => {
                                 const url = buildShareUrl(s.filters, s.filters.perPage || 30);
-                                navigator.clipboard.writeText(url);
-                                showToast('Share link copied', 'success');
+                                void (async () => {
+                                  const ok = await copyToClipboard(url);
+                                  showToast(ok ? 'Share link copied' : 'Failed to copy link', ok ? 'success' : 'error');
+                                })();
                               }}
                               style={{ padding: '0.35rem 0.6rem', fontSize: '0.7rem', fontWeight: 700, background: 'var(--color-bg-card)', border: '1px solid var(--color-border)', borderRadius: '6px', cursor: 'pointer', color: 'var(--color-text)' }}
                             >
@@ -517,7 +537,7 @@ function App() {
             <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid var(--color-border)', background: 'var(--color-bg-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <p style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text)' }}>IssueFinder</p>
-                <p style={{ fontSize: '0.7rem', color: 'var(--color-text-dim)' }}>Version 2.1.0</p>
+                <p style={{ fontSize: '0.7rem', color: 'var(--color-text-dim)' }}>Version 2.1.1</p>
               </div>
               <a href="https://github.com/kanyingidickson-dev/Open-Issue-Finder" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.75rem', color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                 <Github size={14} /> View on GitHub
