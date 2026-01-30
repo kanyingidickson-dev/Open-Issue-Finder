@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 > Note: Tags for versions prior to v2.0.0 were not created in Git.
 
+## [2.1.1] - 2026-01-30
+
+### Fixed
+- Resolved missing dark-mode alpha background variable used by glass/sticky header surfaces
+- Added missing UI animations and styles used by skeleton loading and spinning loaders
+- Improved resilience of local state by safely parsing corrupted localStorage values
+- Improved clipboard copy robustness (graceful failure handling)
+- Improved repo avatar icon fallback rendering
+
+### Security
+- Remediated dev dependency advisory by pinning `esbuild` via `npm overrides` and confirming `npm audit` is clean
+
 ## [2.1.0] - 2026-01-21
 
 ### Added
