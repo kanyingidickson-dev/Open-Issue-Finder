@@ -48,8 +48,6 @@ const HoverSelect: React.FC<HoverSelectProps> = ({ value, options, onChange, pla
         <div
             ref={wrapperRef}
             className="hover-select"
-            onMouseEnter={() => setOpen(true)}
-            onMouseLeave={() => setOpen(false)}
         >
             <button
                 type="button"
@@ -301,7 +299,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, activeFilt
                         </div>
                         <div>
                             <h1 className="font-bold" style={{ fontSize: '1.25rem', lineHeight: 1 }}>IssueFinder</h1>
-                            <p className="font-mono text-xs" style={{ color: 'var(--color-primary)', marginTop: '0.25rem', opacity: 0.9 }}>v2.1.0</p>
+                            <p className="font-mono text-xs" style={{ color: 'var(--color-primary)', marginTop: '0.25rem', opacity: 0.9 }}>v2.1.1</p>
                         </div>
                     </div>
                     <button
