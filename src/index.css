@@ -8,6 +8,7 @@
   --color-bg-card: #141417;
   --color-bg-elevated: #1f1f23;
   --color-bg-hover: #27272a;
+  --color-bg-alpha: rgba(9, 9, 11, 0.9);
 
   --color-primary: #8b5cf6;
   --color-primary-glow: rgba(139, 92, 246, 0.4);
@@ -120,7 +121,6 @@ body {
   align-items: center;
   gap: 0.5rem;
 }
-
 
 /* Filter Buttons */
 .filter-group {
@@ -246,6 +246,33 @@ body {
   position: relative;
 }
 
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.search-box .search-input {
+  padding-left: 2.25rem;
+  padding-right: 2.5rem;
+}
+
+.search-box > .icon-btn {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
 .search-input {
   width: 100%;
   background: var(--color-bg-card);
@@ -265,7 +292,11 @@ body {
   box-shadow: 0 0 0 1px var(--color-primary-dim);
 }
 
-/* Main Content Area */
+.search-input:hover {
+  border-color: var(--color-text-dim);
+  background: var(--color-bg-hover);
+}
+
 /* Main Content Area */
 .app-header {
   height: 64px;
@@ -405,6 +436,16 @@ body {
   align-items: center;
   justify-content: center;
   color: var(--color-text-muted);
+}
+
+.repo-icon.fallback-icon {
+  background: var(--color-bg-elevated);
+  border-color: var(--color-border-hover);
+  color: var(--color-text-muted);
+}
+
+.repo-icon.fallback-icon .hidden-fallback {
+  display: block !important;
 }
 
 .cell-main {
@@ -553,10 +594,41 @@ body {
   animation: fadeIn 0.3s ease-out forwards;
 }
 
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
 /* Utilities */
 .hidden-desktop {
   display: none;
 }
+
+ .sidebar-overlay {
+  display: none;
+ }
 
 /* Responsive */
 @media (max-width: 1024px) {
@@ -586,6 +658,7 @@ body {
   }
 
   .sidebar-overlay {
+    display: block;
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.6);
