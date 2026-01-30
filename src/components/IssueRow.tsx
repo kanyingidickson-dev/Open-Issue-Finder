@@ -29,7 +29,10 @@ export const IssueRow: React.FC<IssueRowProps> = ({ issue, healthScore, isSaved,
         year: 'numeric',
     });
 
-    const [owner, repo] = issue.repository_url.split('/').slice(-2);
+    const repoUrl = issue.repository_url || '';
+    const parts = repoUrl.split('/');
+    const owner = parts.length >= 2 ? parts[parts.length - 2] : 'unknown';
+    const repo = parts.length >= 1 ? parts[parts.length - 1] : 'repo';
 
     const healthLabel = typeof healthScore === 'number' ? Math.round(healthScore) : null;
     const healthColor = healthLabel === null
@@ -61,9 +64,15 @@ export const IssueRow: React.FC<IssueRowProps> = ({ issue, healthScore, isSaved,
     const handleCopy = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        navigator.clipboard.writeText(issue.html_url);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        void (async () => {
+            try {
+                await navigator.clipboard.writeText(issue.html_url);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            } catch {
+                setCopied(false);
+            }
+        })();
     }
 
     const handleSave = (e: React.MouseEvent) => {
@@ -187,6 +196,7 @@ export const IssueRow: React.FC<IssueRowProps> = ({ issue, healthScore, isSaved,
                         className="icon-btn"
                         title={isSaved ? "Remove from Saved" : "Save Issue"}
                         style={{ width: '28px', height: '28px', color: isSaved ? 'var(--color-primary)' : 'inherit' }}
+                        aria-label={isSaved ? 'Remove from saved issues' : 'Save issue'}
                     >
                         <Bookmark size={16} fill={isSaved ? 'currentColor' : 'none'} />
                     </button>
@@ -195,6 +205,7 @@ export const IssueRow: React.FC<IssueRowProps> = ({ issue, healthScore, isSaved,
                         className="icon-btn"
                         title="Copy Link"
                         style={{ width: '28px', height: '28px' }}
+                        aria-label="Copy issue link"
                     >
                         {copied ? <Check size={14} color="#22c55e" /> : <Copy size={14} />}
                     </button>
@@ -205,6 +216,7 @@ export const IssueRow: React.FC<IssueRowProps> = ({ issue, healthScore, isSaved,
                         className="icon-btn"
                         title="Open on GitHub"
                         style={{ width: '28px', height: '28px', color: 'var(--color-primary)' }}
+                        aria-label="Open issue on GitHub"
                     >
                         <ExternalLink size={16} />
                     </a>
